@@ -1467,7 +1467,7 @@ class BasicIPP
 		}
 		if (!isset($this->setup->uri))
 		{
-			// function not defined ! => $this->getPrinters();
+			$this->getPrinters();
 			unset($this->jobs[count($this->jobs) - 1]);
 			unset($this->jobs_uri[count($this->jobs_uri) - 1]);
 			unset($this->status[count($this->status) - 1]);
@@ -1551,6 +1551,14 @@ class BasicIPP
 		);
 		return true;
 	}
+
+    public function getPrinters()
+    {
+        // placeholder for vendor extension operation (getAvailablePrinters for CUPS)
+        $this->jobs = array_merge($this->jobs, array(''));
+        $this->jobs_uri = array_merge($this->jobs_uri, array(''));
+        $this->status = array_merge($this->status, array(''));
+    }
 
 	protected function _buildValues(&$operationattributes, &$jobattributes, &$printerattributes)
 	{

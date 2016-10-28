@@ -796,14 +796,6 @@ class PrintIPP extends BasicIPP
 		return false;
 	}
 
-	public function getPrinters()
-	{
-		// placeholder for vendor extension operation (getAvailablePrinters for CUPS)
-		$this->jobs = array_merge($this->jobs, array(''));
-		$this->jobs_uri = array_merge($this->jobs_uri, array(''));
-		$this->status = array_merge($this->status, array(''));
-	}
-
 	public function generateError($error)
 	{
 		switch ($error)
