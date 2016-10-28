@@ -268,7 +268,7 @@ class http_class
 		switch ($authtype)
 		{
 			case 'basic':
-				$pass = base64_encode($this->user . ":" . $this->password);
+				$pass = base64_encode($this->username . ":" . $this->password);
 				$arguments["Headers"]["Authorization"] = "Basic " . $pass;
 				break;
 
@@ -325,7 +325,7 @@ class http_class
 	private function _HttpError($msg, $level, $errno = null)
 	{
 		$trace = '';
-		$backtrace = debug_backtrace;
+		$backtrace = debug_backtrace();
 		foreach ($backtrace as $trace)
 		{
 			$trace .= sprintf("in [file: '%s'][function: '%s'][line: %s];\n", $trace['file'], $trace['function'], $trace['line']);
@@ -380,7 +380,7 @@ class http_class
 				}
 				else
 				{
-					$length = 0;
+					// useless because of return => $length = 0;
 					return
 						$this->_HttpError(sprintf(_("%s: file is not readable"), $value),
 							E_USER_WARNING);
@@ -388,7 +388,7 @@ class http_class
 			}
 			else
 			{
-				$length = 0;
+				// useless because of return $length = 0;
 				return
 					$this->_HttpError(sprintf
 						(_("%s: not a valid argument for content"), $type),
@@ -484,7 +484,7 @@ class http_class
 		$this->reply_headers = array();
 		$this->reply_body = "";
 		$headers = array();
-		$body = "";
+		//not used => $body = "";
 		while (!feof($this->connection))
 		{
 			$line = fgets($this->connection, 1024);
@@ -547,10 +547,10 @@ class http_class
 		$nc = sprintf('%x', $this->nc);
 		$prepend = "";
 		while ((strlen($nc) + strlen($prepend)) < 8)
-			$prependi .= "0";
+			$prepend .= "0";
 		$nc = $prepend . $nc;
 		$cnonce = "printipp";
-		$username = $this->user;
+		$username = $this->username;
 		$password = $this->password;
 		$A1 = $username . ":" . $fields["realm"] . ":" . $password;
 		if (array_key_exists("algorithm", $fields))
@@ -572,7 +572,6 @@ class http_class
 						sprintf(_("digest Authorization: algorithm '%s' not implemented"),
 							$algorithm),
 						E_USER_WARNING);
-					return false;
 					break;
 			}
 		}

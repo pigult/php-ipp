@@ -49,7 +49,7 @@ class ExtendedPrintIPP extends PrintIPP
 	{
 		parent::__construct();
 	}
-
+    protected $document_uri='';
 	// OPERATIONS
 	public function printURI($uri)
 	{

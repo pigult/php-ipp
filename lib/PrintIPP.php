@@ -44,6 +44,10 @@ require_once("BasicIPP.php");
 
 class PrintIPP extends BasicIPP
 {
+    protected $parsed=[];
+    protected $attribute_name='';
+    protected $last_attribute_name='';
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -824,7 +828,7 @@ class PrintIPP extends BasicIPP
 	// SETUP
 	protected function _setOperationId()
 	{
-		$prepend = '';
+		//not used $prepend = '';
 		$this->operation_id += 1;
 		$this->meta->operation_id = self::_integerBuild($this->operation_id);
 		self::_putDebug("operation id is: " . $this->operation_id . "\n", 2);
@@ -866,6 +870,7 @@ class PrintIPP extends BasicIPP
 
 		$k = -1;
 		$l = 0;
+        $this->parsed=[];
 		for ($i = 0; $i < count($this->serveroutput->response); $i++)
 		{
 			for ($j = 0; $j < (count($this->serveroutput->response[$i]) - 1); $j++)
@@ -1327,7 +1332,7 @@ class PrintIPP extends BasicIPP
 		{
 			if ($this->_parsing->offset >= strlen($this->serveroutput->body))
 			{
-				return;
+				return '';
 			}
 			$name .= $this->serveroutput->body[$this->_parsing->offset];
 			$this->_parsing->offset += 1;
@@ -1362,7 +1367,7 @@ class PrintIPP extends BasicIPP
 
 			if ($this->_parsing->offset >= strlen($this->serveroutput->body))
 			{
-				return;
+				return '';
 			}
 			$value .= $this->serveroutput->body[$this->_parsing->offset];
 			$this->_parsing->offset += 1;
@@ -1523,9 +1528,6 @@ class PrintIPP extends BasicIPP
 
 	protected function _interpretRangeOfInteger($value)
 	{
-		$value_parsed = 0;
-		$integer1 = $integer2 = 0;
-
 		$halfsize = strlen($value) / 2;
 
 		$integer1 = self::_interpretInteger(substr($value, 0, $halfsize));

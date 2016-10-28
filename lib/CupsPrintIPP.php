@@ -741,7 +741,7 @@ class CupsPrintIPP extends ExtendedPrintIPP
 		if ($value_parsed % 524288 == 262144)
 		{
 			$type[18] = 'fax-device';
-			$value_parsed -= 262144;
+			//used because there's no other 'if'  => $value_parsed -= 262144;
 		}
 
 		return $type;
