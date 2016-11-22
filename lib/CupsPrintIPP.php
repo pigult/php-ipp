@@ -35,7 +35,7 @@
 		- ...
 		- CUPS-IPP-1.1
 */
-
+namespace PHPIPP;
 require_once("ExtendedPrintIPP.php");
 
 class CupsPrintIPP extends ExtendedPrintIPP
@@ -55,13 +55,13 @@ class CupsPrintIPP extends ExtendedPrintIPP
 	//
 	// OPERATIONS
 	//
-	public function cupsGetDefaults($attributes = array("all"))
+	public function cupsGetDefaults($attributes = ["all"])
 	{
 		//The CUPS-Get-Default operation returns the default printer URI and attributes
 
-		$this->jobs = array_merge($this->jobs, array(""));
-		$this->jobs_uri = array_merge($this->jobs_uri, array(""));
-		$this->parsed = array();
+		$this->jobs = array_merge($this->jobs, [""]);
+		$this->jobs_uri = array_merge($this->jobs_uri, [""]);
+		$this->parsed = [];
 		unset($this->printer_attributes);
 
 		if (!isset($this->setup->charset))
@@ -108,8 +108,8 @@ class CupsPrintIPP extends ExtendedPrintIPP
 
 		self::_putDebug("Request: " . $this->output);
 
-		$post_values = array("Content-Type" => "application/ipp",
-			"Data" => $this->output);
+		$post_values = ["Content-Type" => "application/ipp",
+			"Data" => $this->output];
 
 		if (self::_sendHttp($post_values, '/'))
 		{
@@ -137,7 +137,7 @@ class CupsPrintIPP extends ExtendedPrintIPP
 		if (isset($this->serveroutput) && isset($this->serveroutput->status))
 		{
 
-			$this->status = array_merge($this->status, array($this->serveroutput->status));
+			$this->status = array_merge($this->status, [$this->serveroutput->status]);
 			if ($this->serveroutput->status == "successfull-ok")
 			{
 				self::_errorLog("getting defaults: " . $this->serveroutput->status, 3);
@@ -151,7 +151,7 @@ class CupsPrintIPP extends ExtendedPrintIPP
 		}
 		else
 		{
-			$this->status = array_merge($this->status, array("OPERATION FAILED"));
+			$this->status = array_merge($this->status, ["OPERATION FAILED"]);
 			self::_errorLog("getting defaults : OPERATION FAILED", 1);
 		}
 		return false;
@@ -161,9 +161,9 @@ class CupsPrintIPP extends ExtendedPrintIPP
 	{
 		//The CUPS-Get-Default operation returns the default printer URI and attributes
 
-		$this->jobs = array_merge($this->jobs, array(""));
-		$this->jobs_uri = array_merge($this->jobs_uri, array(""));
-		$this->parsed = array();
+		$this->jobs = array_merge($this->jobs, [""]);
+		$this->jobs_uri = array_merge($this->jobs_uri, [""]);
+		$this->parsed = [];
 		unset($this->printer_attributes);
 
 		if (!isset($this->setup->charset))
@@ -195,8 +195,8 @@ class CupsPrintIPP extends ExtendedPrintIPP
 
 		self::_putDebug("Request: " . $this->output);
 
-		$post_values = array("Content-Type" => "application/ipp",
-			"Data" => $this->output);
+		$post_values = ["Content-Type" => "application/ipp",
+			"Data" => $this->output];
 
 		if (self::_sendHttp($post_values, '/admin/'))
 		{
@@ -210,7 +210,7 @@ class CupsPrintIPP extends ExtendedPrintIPP
 		if (isset($this->serveroutput) && isset($this->serveroutput->status))
 		{
 
-			$this->status = array_merge($this->status, array($this->serveroutput->status));
+			$this->status = array_merge($this->status, [$this->serveroutput->status]);
 			if ($this->serveroutput->status == "successfull-ok")
 			{
 				self::_errorLog("getting defaults: " . $this->serveroutput->status, 3);
@@ -224,7 +224,7 @@ class CupsPrintIPP extends ExtendedPrintIPP
 		}
 		else
 		{
-			$this->status = array_merge($this->status, array("OPERATION FAILED"));
+			$this->status = array_merge($this->status, ["OPERATION FAILED"]);
 			self::_errorLog("getting defaults : OPERATION FAILED", 1);
 		}
 		return false;
@@ -234,9 +234,9 @@ class CupsPrintIPP extends ExtendedPrintIPP
 	{
 		//The CUPS-Get-Default operation returns the default printer URI and attributes
 
-		$this->jobs = array_merge($this->jobs, array(""));
-		$this->jobs_uri = array_merge($this->jobs_uri, array(""));
-		$this->parsed = array();
+		$this->jobs = array_merge($this->jobs, [""]);
+		$this->jobs_uri = array_merge($this->jobs_uri, [""]);
+		$this->parsed = [];
 		unset($this->attributes);
 
 		if (!isset($this->setup->charset))
@@ -280,8 +280,8 @@ class CupsPrintIPP extends ExtendedPrintIPP
 
 		self::_putDebug("Request: " . $this->output);
 
-		$post_values = array("Content-Type" => "application/ipp",
-			"Data" => $this->output);
+		$post_values = ["Content-Type" => "application/ipp",
+			"Data" => $this->output];
 
 		if (self::_sendHttp($post_values, '/admin/'))
 		{
@@ -295,7 +295,7 @@ class CupsPrintIPP extends ExtendedPrintIPP
 		if (isset($this->serveroutput) && isset($this->serveroutput->status))
 		{
 
-			$this->status = array_merge($this->status, array($this->serveroutput->status));
+			$this->status = array_merge($this->status, [$this->serveroutput->status]);
 			if ($this->serveroutput->status == "successfull-ok")
 			{
 				self::_errorLog("getting defaults: " . $this->serveroutput->status, 3);
@@ -309,21 +309,21 @@ class CupsPrintIPP extends ExtendedPrintIPP
 		}
 		else
 		{
-			$this->status = array_merge($this->status, array("OPERATION FAILED"));
+			$this->status = array_merge($this->status, ["OPERATION FAILED"]);
 			self::_errorLog("getting defaults : OPERATION FAILED", 1);
 		}
 		return false;
 	}
 
-	public function getPrinters($printer_location = false, $printer_info = false, $attributes = array())
+	public function getPrinters($printer_location = false, $printer_info = false, $attributes = [])
 	{
 		if (count($attributes) == 0)
 		{
 			true;
 		}
-		$attributes = array('printer-uri-supported', 'printer-location', 'printer-info', 'printer-type', 'color-supported', 'printer-name');
-		$this->jobs = array_merge($this->jobs, array(""));
-		$this->jobs_uri = array_merge($this->jobs_uri, array(""));
+		$attributes = ['printer-uri-supported', 'printer-location', 'printer-info', 'printer-type', 'color-supported', 'printer-name'];
+		$this->jobs = array_merge($this->jobs, [""]);
+		$this->jobs_uri = array_merge($this->jobs_uri, [""]);
 
 		unset ($this->printers_attributes);
 
@@ -389,8 +389,8 @@ class CupsPrintIPP extends ExtendedPrintIPP
 
 		$this->output = $this->stringjob;
 
-		$post_values = array("Content-Type" => "application/ipp",
-			"Data" => $this->output);
+		$post_values = ["Content-Type" => "application/ipp",
+			"Data" => $this->output];
 
 		if (self::_sendHttp($post_values, '/'))
 		{
@@ -404,7 +404,7 @@ class CupsPrintIPP extends ExtendedPrintIPP
 		if (isset($this->serveroutput) && isset($this->serveroutput->status))
 		{
 
-			$this->status = array_merge($this->status, array($this->serveroutput->status));
+			$this->status = array_merge($this->status, [$this->serveroutput->status]);
 			if ($this->serveroutput->status == "successfull-ok")
 			{
 				self::_errorLog("getting printers: " . $this->serveroutput->status, 3);
@@ -417,7 +417,7 @@ class CupsPrintIPP extends ExtendedPrintIPP
 		}
 		else
 		{
-			$this->status = array_merge($this->status, array("OPERATION FAILED"));
+			$this->status = array_merge($this->status, ["OPERATION FAILED"]);
 			self::_errorLog("getting printers : OPERATION FAILED", 1);
 		}
 		return false;
@@ -464,37 +464,37 @@ class CupsPrintIPP extends ExtendedPrintIPP
 	{
 		// override parent with specific cups attributes
 
-		$operation_tags = array();
+		$operation_tags = [];
 		$this->operation_tags = array_merge($this->operation_tags, $operation_tags);
 
-		$job_tags = array("job-billing" => array("tag" => "textWithoutLanguage"),
-			"blackplot" => array("tag" => "boolean"),
-			"brightness" => array("tag" => "integer"),
-			"columns" => array("tag" => "integer"),
-			"cpi" => array("tag" => "enum"),
-			"fitplot" => array("tag" => "boolean"),
-			"gamma" => array("tag" => "integer"),
-			"hue" => array("tag" => "integer"),
-			"lpi" => array("tag" => "enum"),
-			"mirror" => array("tag", "boolean"),
-			"natural-scaling" => array("tag" => "integer"),
-			"number-up-layout" => array("tag" => "keyword"),
-			"page-border" => array("tag" => "keyword"),
-			"page-bottom" => array("tag" => "integer"),
-			"page-label" => array("tag" => "textWithoutLanguage"),
-			"page-left" => array("tag" => "integer"),
-			"page-right" => array("tag" => "integer"),
-			"page-set" => array("tag" => "keyword"),
-			"page-top" => array("tag" => "integer"),
-			"penwidth" => array("tag" => "integer"),
-			"position" => array("tag" => "keyword"),
-			"ppi" => array("tag" => "integer"),
-			"prettyprint" => array("tag", "boolean"),
-			"saturation" => array("tag" => "integer"),
-			"scaling" => array("tag" => "integer"),
-			"wrap" => array("tag", "boolean"),
+		$job_tags = ["job-billing" => ["tag" => "textWithoutLanguage"],
+			"blackplot" => ["tag" => "boolean"],
+			"brightness" => ["tag" => "integer"],
+			"columns" => ["tag" => "integer"],
+			"cpi" => ["tag" => "enum"],
+			"fitplot" => ["tag" => "boolean"],
+			"gamma" => ["tag" => "integer"],
+			"hue" => ["tag" => "integer"],
+			"lpi" => ["tag" => "enum"],
+			"mirror" => ["tag", "boolean"],
+			"natural-scaling" => ["tag" => "integer"],
+			"number-up-layout" => ["tag" => "keyword"],
+			"page-border" => ["tag" => "keyword"],
+			"page-bottom" => ["tag" => "integer"],
+			"page-label" => ["tag" => "textWithoutLanguage"],
+			"page-left" => ["tag" => "integer"],
+			"page-right" => ["tag" => "integer"],
+			"page-set" => ["tag" => "keyword"],
+			"page-top" => ["tag" => "integer"],
+			"penwidth" => ["tag" => "integer"],
+			"position" => ["tag" => "keyword"],
+			"ppi" => ["tag" => "integer"],
+			"prettyprint" => ["tag", "boolean"],
+			"saturation" => ["tag" => "integer"],
+			"scaling" => ["tag" => "integer"],
+			"wrap" => ["tag", "boolean"],
 
-		);
+        ];
 		$this->job_tags = array_merge($this->job_tags, $job_tags);
 	}
 
@@ -549,17 +549,17 @@ class CupsPrintIPP extends ExtendedPrintIPP
 	//
 	private function _getAvailablePrinters()
 	{
-		$this->available_printers = array();
-        $this->printer_map = array();
+		$this->available_printers = [];
+        $this->printer_map = [];
 		$k = 0;
-		$this->printers_attributes = new stdClass();
+		$this->printers_attributes = new \stdClass();
 
 		for ($i = 0; (array_key_exists($i, $this->serveroutput->response)); $i++)
 		{
 			if (($this->serveroutput->response[$i]['attributes']) == "printer-attributes")
 			{
 				$phpname = "_printer" . $k;
-				$this->printers_attributes->$phpname = new stdClass();
+				$this->printers_attributes->$phpname = new \stdClass();
 				for ($j = 0; array_key_exists($j, $this->serveroutput->response[$i]); $j++)
 				{
 
@@ -569,11 +569,11 @@ class CupsPrintIPP extends ExtendedPrintIPP
 					switch ($name)
 					{
 						case "printer_uri_supported":
-							$this->available_printers = array_merge($this->available_printers, array($value));
+							$this->available_printers = array_merge($this->available_printers, [$value]);
 							break;
 						case "printer_type":
 							$table = self::_interpretPrinterType($value);
-							$this->printers_attributes->$phpname->$name = new stdClass();
+							$this->printers_attributes->$phpname->$name = new \stdClass();
 
 							for ($l = 0; $l < count($table); $l++)
 							{

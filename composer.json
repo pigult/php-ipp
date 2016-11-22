@@ -1,7 +1,7 @@
 {
-    "name": "lexbrugman/php-print-ipp",
+    "name": "DominiqueFERET/php-print-ipp",
     "license": "GPL-2.0",
     "autoload": {
-        "classmap": ["lib/"]
+        "psr-4": {"PHPIPP\\": "lib/"}
     }
 }

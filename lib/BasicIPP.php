@@ -35,10 +35,10 @@
    - RFC 3380
    - RFC 3382
  */
-
+namespace PHPIPP;
 require_once ("http_class.php");
 
-class ippException extends Exception
+class ippException extends \Exception
 {
 	protected $errno;
 
@@ -63,12 +63,12 @@ class ippException extends Exception
 
 class BasicIPP
 {
-	public $paths = array(
+	public $paths = [
 		"root" => "/",
 		"admin" => "/admin/",
 		"printers" => "/printers/",
 		"jobs" => "/jobs/"
-	);
+    ];
 	public $http_timeout = 30; // timeout at http connection (seconds) 0 => default => 30.
 	public $http_data_timeout = 30; // data reading timeout (milliseconds) 0 => default => 30.
 	public $ssl = false;
@@ -78,19 +78,19 @@ class BasicIPP
 	public $handle_http_exceptions = 1;
 
 	// readables variables
-	public $jobs = array();
-	public $jobs_uri = array();
-	public $status = array();
-	public $response_completed = array();
+	public $jobs = [];
+	public $jobs_uri = [];
+	public $status = [];
+	public $response_completed = [];
 	public $last_job = "";
 	public $attributes; // object you can read: attributes after validateJob()
 	public $printer_attributes; // object you can read: printer's attributes after getPrinterAttributes()
 	public $job_attributes; // object you can read: last job attributes
 	public $jobs_attributes; // object you can read: jobs attributes after getJobs()
-	public $available_printers = array();
-    public $printer_map = array();
-	public $printers_uri = array();
-	public $debug = array();
+	public $available_printers = [];
+    public $printer_map = [];
+	public $printers_uri = [];
+	public $debug = [];
 	public $response;
 	public $meta;
 
@@ -129,10 +129,10 @@ class BasicIPP
 	protected $index;
 	protected $collection; //RFC3382
 	protected $collection_index; //RFC3382
-	protected $collection_key = array(); //RFC3382
+	protected $collection_key = []; //RFC3382
 	protected $collection_depth = -1; //RFC3382
 	protected $end_collection = false; //RFC3382
-	protected $collection_nbr = array(); //RFC3382
+	protected $collection_nbr = []; //RFC3382
 	protected $unix = false; // true -> use unix sockets instead of http
     protected $output;
 
@@ -148,12 +148,12 @@ class BasicIPP
 		}
 
 		date_default_timezone_set($tz);
-		$this->meta = new stdClass();
-		$this->setup = new stdClass();
-		$this->values = new stdClass();
-		$this->serveroutput = new stdClass();
-		$this->error_generation = new stdClass();
-		$this->_parsing = new stdClass();
+		$this->meta = new \stdClass();
+		$this->setup = new \stdClass();
+		$this->values = new \stdClass();
+		$this->serveroutput = new \stdClass();
+		$this->error_generation = new \stdClass();
+		$this->_parsing = new \stdClass();
 		self::_initTags();
 	}
 
@@ -672,7 +672,7 @@ class BasicIPP
 		{
 			echo $this->debug[$i], "\n";
 		}
-		$this->debug = array();
+		$this->debug = [];
 		$this->debug_count = 0;
 	}
 
@@ -683,7 +683,7 @@ class BasicIPP
 		{
 			$debug .= $this->debug[$i];
 		}
-		$this->debug = array();
+		$this->debug = [];
 		$this->debug_count = 0;
 		return $debug;
 	}
@@ -712,18 +712,18 @@ class BasicIPP
 			{
 				$this->output .= chr(0x16);
 			}
-			$post_values = array(
+			$post_values = [
 				"Content-Type" => "application/ipp",
 				"Data" => $this->output,
 				"File" => $this->data
-			);
+            ];
 			if ($this->setup->datatype == "TEXT" && !isset($this->setup->noFormFeed))
 			{
 				$post_values = array_merge(
 					$post_values,
-					array(
+					[
 						"Filetype" => "TEXT"
-					)
+                    ]
 				);
 			}
 		}
@@ -735,10 +735,10 @@ class BasicIPP
 					. $this->datahead
 					. $this->data
 					. $this->datatail;
-			$post_values = array(
+			$post_values = [
 				"Content-Type" => "application/ipp",
 				"Data" => $this->output
-			);
+            ];
 		}
 		if (self::_sendHttp($post_values, $this->paths["printers"]))
 		{
@@ -746,9 +746,9 @@ class BasicIPP
 		}
 		if (isset($this->serveroutput) && isset($this->serveroutput->status))
 		{
-			$this->status = array_merge($this->status, array(
+			$this->status = array_merge($this->status, [
 				$this->serveroutput->status
-			));
+            ]);
 			if ($this->serveroutput->status == "successfull-ok")
 			{
 				self::_errorLog(
@@ -767,11 +767,11 @@ class BasicIPP
 		}
 
 		$this->status =
-			array_merge($this->status, array("OPERATION FAILED"));
+			array_merge($this->status, ["OPERATION FAILED"]);
 		$this->jobs =
-			array_merge($this->jobs, array(""));
+			array_merge($this->jobs, [""]);
 		$this->jobs_uri =
-			array_merge($this->jobs_uri, array(""));
+			array_merge($this->jobs_uri, [""]);
 
 		self::_errorLog("printing job : OPERATION FAILED", 1);
 		return false;
@@ -788,7 +788,7 @@ class BasicIPP
 		$this->response_completed[] = "no";
 		unset($this->serverouptut);
 		self::_putDebug(_("Processing HTTP request"), 2);
-		$this->serveroutput->headers = array();
+		$this->serveroutput->headers = [];
 		$this->serveroutput->body = "";
 		$http = new http_class;
 		if (!$this->unix) {
@@ -823,24 +823,24 @@ class BasicIPP
 		$http->password = $this->password;
 		$http->GetRequestArguments($url, $arguments);
 		$arguments["RequestMethod"] = "POST";
-		$arguments["Headers"] = array(
+		$arguments["Headers"] = [
 			"Content-Type" => "application/ipp"
-		);
-		$arguments["BodyStream"] = array(
-			array(
+        ];
+		$arguments["BodyStream"] = [
+			[
 				"Data" => $post_values["Data"]
-			)
-		);
+            ]
+        ];
 		if (isset($post_values["File"])) {
-			$arguments["BodyStream"][] = array(
+			$arguments["BodyStream"][] = [
 				"File" => $post_values["File"]
-			);
+            ];
 		}
 		if (isset($post_values["FileType"])
 			&& !strcmp($post_values["FileType"], "TEXT")
 		)
 		{
-			$arguments["BodyStream"][] = array("Data" => chr(12));
+			$arguments["BodyStream"][] = ["Data" => chr(12)];
 		}
 		$arguments["RequestURI"] = $uri;
 		if ($this->with_exceptions && $this->handle_http_exceptions)
@@ -888,7 +888,7 @@ class BasicIPP
 						. "*********** END REQUEST BODY *********"
 				);
 				$i = 0;
-				$headers = array();
+				$headers = [];
 				unset($this->serveroutput->headers);
 				$http->ReadReplyHeaders($headers);
 				self::_putDebug("H T T P    R E S P O N S E :");
@@ -941,162 +941,162 @@ class BasicIPP
 	//
 	protected function _initTags()
 	{
-		$this->tags_types = array(
-			"unsupported" => array(
+		$this->tags_types = [
+			"unsupported" => [
 				"tag" => chr(0x10),
 				"build" => ""
-			),
-			"reserved" => array(
+            ],
+			"reserved" => [
 				"tag" => chr(0x11),
 				"build" => ""
-			),
-			"unknown" => array(
+            ],
+			"unknown" => [
 				"tag" => chr(0x12),
 				"build" => ""
-			),
-			"no-value" => array(
+            ],
+			"no-value" => [
 				"tag" => chr(0x13),
 				"build" => "no_value"
-			),
-			"integer" => array(
+            ],
+			"integer" => [
 				"tag" => chr(0x21),
 				"build" => "integer"
-			),
-			"boolean" => array(
+            ],
+			"boolean" => [
 				"tag" => chr(0x22),
 				"build" => "boolean"
-			),
-			"enum" => array(
+            ],
+			"enum" => [
 				"tag" => chr(0x23),
 				"build" => "enum"
-			),
-			"octetString" => array(
+            ],
+			"octetString" => [
 				"tag" => chr(0x30),
 				"build" => "octet_string"
-			),
-			"datetime" => array(
+            ],
+			"datetime" => [
 				"tag" => chr(0x31),
 				"build" => "datetime"
-			),
-			"resolution" => array(
+            ],
+			"resolution" => [
 				"tag" => chr(0x32),
 				"build" => "resolution"
-			),
-			"rangeOfInteger" => array(
+            ],
+			"rangeOfInteger" => [
 				"tag" => chr(0x33),
 				"build" => "range_of_integers"
-			),
-			"textWithLanguage" => array(
+            ],
+			"textWithLanguage" => [
 				"tag" => chr(0x35),
 				"build" => "string"
-			),
-			"nameWithLanguage" => array(
+            ],
+			"nameWithLanguage" => [
 				"tag" => chr(0x36),
 				"build" => "string"
-			),
+            ],
 			/*
 				   "text" => array ("tag" => chr(0x40),
 				   "build" => "string"),
 				   "text string" => array ("tag" => chr(0x40),
 				   "build" => "string"),
 				 */
-			"textWithoutLanguage" => array(
+			"textWithoutLanguage" => [
 				"tag" => chr(0x41),
 				"build" => "string"
-			),
-			"nameWithoutLanguage" => array(
+            ],
+			"nameWithoutLanguage" => [
 				"tag" => chr(0x42),
 				"buid" => "string"
-			),
-			"keyword" => array(
+            ],
+			"keyword" => [
 				"tag" => chr(0x44),
 				"build" => "string"
-			),
-			"uri" => array(
+            ],
+			"uri" => [
 				"tag" => chr(0x45),
 				"build" => "string"
-			),
-			"uriScheme" => array(
+            ],
+			"uriScheme" => [
 				"tag" => chr(0x46),
 				"build" => "string"
-			),
-			"charset" => array(
+            ],
+			"charset" => [
 				"tag" => chr(0x47),
 				"build" => "string"
-			),
-			"naturalLanguage" => array(
+            ],
+			"naturalLanguage" => [
 				"tag" => chr(0x48),
 				"build" => "string"
-			),
-			"mimeMediaType" => array(
+            ],
+			"mimeMediaType" => [
 				"tag" => chr(0x49),
 				"build" => "string"
-			),
-			"extendedAttributes" => array(
+            ],
+			"extendedAttributes" => [
 				"tag" => chr(0x7F),
 				"build" => "extended"
-			),
-		);
-		$this->operation_tags = array(
-			"compression" => array(
+            ],
+        ];
+		$this->operation_tags = [
+			"compression" => [
 				"tag" => "keyword"
-			),
-			"document-natural-language" => array(
+            ],
+			"document-natural-language" => [
 				"tag" => "naturalLanguage"
-			),
-			"job-k-octets" => array(
+            ],
+			"job-k-octets" => [
 				"tag" => "integer"
-			),
-			"job-impressions" => array(
+            ],
+			"job-impressions" => [
 				"tag" => "integer"
-			),
-			"job-media-sheets" => array(
+            ],
+			"job-media-sheets" => [
 				"tag" => "integer"
-			),
-		);
-		$this->job_tags = array(
-			"job-priority" => array(
+            ],
+        ];
+		$this->job_tags = [
+			"job-priority" => [
 				"tag" => "integer"
-			),
-			"job-hold-until" => array(
+            ],
+			"job-hold-until" => [
 				"tag" => "keyword"
-			),
-			"job-sheets" => array(
+            ],
+			"job-sheets" => [
 				"tag" => "keyword"
-			), //banner page
-			"multiple-document-handling" => array(
+            ], //banner page
+			"multiple-document-handling" => [
 				"tag" => "keyword"
-			),
+            ],
 			//"copies" => array("tag" => "integer"),
-			"finishings" => array(
+			"finishings" => [
 				"tag" => "enum"
-			),
+            ],
 			//"page-ranges" => array("tag" => "rangeOfInteger"), // has its own function
 			//"sides" => array("tag" => "keyword"), // has its own function
-			"number-up" => array(
+			"number-up" => [
 				"tag" => "integer"
-			),
-			"orientation-requested" => array(
+            ],
+			"orientation-requested" => [
 				"tag" => "enum"
-			),
-			"media" => array(
+            ],
+			"media" => [
 				"tag" => "keyword"
-			),
-			"printer-resolution" => array(
+            ],
+			"printer-resolution" => [
 				"tag" => "resolution"
-			),
-			"print-quality" => array(
+            ],
+			"print-quality" => [
 				"tag" => "enum"
-			),
-			"job-message-from-operator" => array(
+            ],
+			"job-message-from-operator" => [
 				"tag" => "textWithoutLanguage"
-			),
-		);
-		$this->printer_tags = array(
-			"requested-attributes" => array(
+            ],
+        ];
+		$this->printer_tags = [
+			"requested-attributes" => [
 				"tag" => "keyword"
-			)
-		);
+            ]
+        ];
 	}
 
 	//
@@ -1136,7 +1136,7 @@ class BasicIPP
 	//
 	protected function _parseServerOutput()
 	{
-		$this->serveroutput->response = array();
+		$this->serveroutput->response = [];
 		if (!self::_parseHttpHeaders()) {
 			return false;
 		}
@@ -1555,9 +1555,9 @@ class BasicIPP
     public function getPrinters()
     {
         // placeholder for vendor extension operation (getAvailablePrinters for CUPS)
-        $this->jobs = array_merge($this->jobs, array(''));
-        $this->jobs_uri = array_merge($this->jobs_uri, array(''));
-        $this->status = array_merge($this->status, array(''));
+        $this->jobs = array_merge($this->jobs, ['']);
+        $this->jobs_uri = array_merge($this->jobs_uri, ['']);
+        $this->status = array_merge($this->status, ['']);
     }
 
 	protected function _buildValues(&$operationattributes, &$jobattributes, &$printerattributes)
@@ -1860,7 +1860,7 @@ class BasicIPP
 			case 'integer':
 				$this->job_tags[$attribute]['value'][] = self::_integerBuild($value);
 				break;
-
+            case 'boolean':
 			case 'nameWithoutLanguage':
 			case 'nameWithLanguage':
 			case 'textWithoutLanguage':
@@ -1888,14 +1888,14 @@ class BasicIPP
 				if (preg_match("#dpc#", $value)) {
 					$unit = chr(0x4);
 				}
-				$search = array(
+				$search = [
 					"#(dpi|dpc)#",
 					'#(x|-)#'
-				);
-				$replace = array(
+                ];
+				$replace = [
 					"",
 					":"
-				);
+                ];
 				$value = self::_rangeOfIntegerBuild(preg_replace($search, $replace, $value)) . $unit;
 				$this->job_tags[$attribute]['value'][] = $value;
 				break;

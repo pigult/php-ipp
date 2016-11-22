@@ -64,7 +64,9 @@
  * httpException class
  *
  ************************/
-class httpException extends Exception
+
+namespace PHPIPP;
+class httpException extends \Exception
 {
 	protected $errno;
 
@@ -88,7 +90,7 @@ class httpException extends Exception
 
 function error2string($value)
 {
-	$level_names = array(
+	$level_names = [
 		E_ERROR => 'E_ERROR',
 		E_WARNING => 'E_WARNING',
 		E_PARSE => 'E_PARSE',
@@ -100,11 +102,11 @@ function error2string($value)
 		E_USER_ERROR => 'E_USER_ERROR',
 		E_USER_WARNING => 'E_USER_WARNING',
 		E_USER_NOTICE => 'E_USER_NOTICE'
-	);
+    ];
 	if (defined('E_STRICT')) {
 		$level_names[E_STRICT] = 'E_STRICT';
 	}
-	$levels = array();
+	$levels = [];
 	if (($value & E_ALL) == E_ALL)
 	{
 		$levels[] = 'E_ALL';
@@ -136,7 +138,7 @@ class http_class
 	public $force_multipart_form_post;
 	public $username;
 	public $password;
-	public $request_headers = array();
+	public $request_headers = [];
 	public $request_body = "Not a useful information";
 	public $status;
 	public $window_size = 1024; // chunk size of data
@@ -145,11 +147,11 @@ class http_class
 	public $host;
 	private $default_port = 631;
 	private $headers;
-	private $reply_headers = array();
-	private $reply_body = array();
+	private $reply_headers = [];
+	private $reply_body = [];
 	private $connection;
 	private $arguments;
-	private $bodystream = array();
+	private $bodystream = [];
 	private $last_limit;
 	private $connected;
 	private $nc = 1;
@@ -169,7 +171,7 @@ class http_class
 
 	public function GetRequestArguments($url, &$arguments)
 	{
-		$this->arguments = array();
+		$this->arguments = [];
 		$this->arguments["URL"] = $arguments["URL"] = $url;
 		$this->arguments["RequestMethod"] = $arguments["RequestMethod"] = "POST";
 		$this->headers["Content-Length"] = 0;
@@ -239,7 +241,7 @@ class http_class
 			return $this->_HttpError($error, E_USER_WARNING);
 		}
 		$this->connected = true;
-		return array(true, "success");
+		return [true, "success"];
 	}
 
 	public function SendRequest($arguments)
@@ -254,7 +256,7 @@ class http_class
 		self::_ReadReply();
 		if (!preg_match('#http/1.1 401 unauthorized#', $this->status))
 		{
-			return array(true, "success");
+			return [true, "success"];
 		}
 		$headers = array_keys($this->reply_headers);
 		$error = _("need authentication but no mechanism provided");
@@ -293,7 +295,7 @@ class http_class
 			return $this->_HttpError($error . ": " . $result[1], E_USER_WARNING);
 		}
 		self::_ReadReply();
-		return array(true, "success");
+		return [true, "success"];
 	}
 
 	public function ReadReplyHeaders(&$headers)
@@ -326,9 +328,13 @@ class http_class
 	{
 		$trace = '';
 		$backtrace = debug_backtrace();
-		foreach ($backtrace as $trace)
+		foreach ($backtrace as $backtrace_item)
 		{
-			$trace .= sprintf("in [file: '%s'][function: '%s'][line: %s];\n", $trace['file'], $trace['function'], $trace['line']);
+            $backtrace_item['file'] = (!isset($backtrace_item['file'])) ? '' : $backtrace_item['file'];
+            $backtrace_item['function'] = (!isset($backtrace_item['function'])) ? '' : $backtrace_item['function'];
+            $backtrace_item['line'] = (!isset($backtrace_item['line'])) ? '' : $backtrace_item['line'];
+
+            $trace .= sprintf("in [file: '%s'][function: '%s'][line: %s];\n", $backtrace_item['file'], $backtrace_item['function'], $backtrace_item['line']);
 		}
 		$msg = sprintf('%s\n%s: [errno: %s]: %s',
 			$trace, error2string($level), $errno, $msg);
@@ -339,7 +345,7 @@ class http_class
 		else
 		{
 			trigger_error($msg, $level);
-			return array(false, $msg);
+			return [false, $msg];
 		}
 	}
 
@@ -356,7 +362,7 @@ class http_class
 	private function _StreamRequest($arguments)
 	{
 		$this->status = false;
-		$this->reply_headers = array();
+		$this->reply_headers = [];
 		$this->reply_body = "";
 		if (!$this->connected)
 		{
@@ -472,18 +478,18 @@ class http_class
 				}
 			}
 		}
-		return array(true, "success");
+		return [true, "success"];
 	}
 
 	private function _ReadReply()
 	{
 		if (!$this->connected)
 		{
-			return array(false, _("not connected"));
+			return [false, _("not connected")];
 		}
-		$this->reply_headers = array();
+		$this->reply_headers = [];
 		$this->reply_body = "";
-		$headers = array();
+		$headers = [];
 		//not used => $body = "";
 		while (!feof($this->connection))
 		{
@@ -538,6 +544,7 @@ class http_class
 		list ($head, $auth) = preg_split("# #", $auth, 2);
 		#$auth = split (", ", $auth);
 		$auth = preg_split("#, #", $auth);
+        $fields=[];
 		foreach ($auth as $sheme)
 		{
 			#list ($sheme, $value) = split ('=', $sheme);
